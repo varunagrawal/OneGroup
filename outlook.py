@@ -35,9 +35,10 @@ class Contacts(object):
 
     def __init__(self):
         super()
-        self.token = None
-        self.id_token = None
-        self.token_expires_in = None
+        print(self.get_signin_url())
+        self.auth = self.authenticate()
+        self.token = auth['access_token']
+        self.id_token = auth['id_token']
 
     def get_signin_url(self):
         """
@@ -69,11 +70,7 @@ class Contacts(object):
                      }
         r = requests.post(self.token_url, data=post_data)
         try:
-            auth = r.json()
-            self.token = auth['access_token']
-            print(self.token)
-            self.id_token = auth['id_token']
-            return auth
+            return r.json()
         except (Exception,):
             return 'Error retrieving token: {0} - {1}'.format(r.status_code, r.text)
 
@@ -97,7 +94,7 @@ class Contacts(object):
 
     def make_api_call(self, method, url, token, user_email, payload=None, parameters=None):
         # Send these headers with all API calls
-        headers = {'User-Agent': 'python_tutorial/1.0',
+        headers = {'User-Agent': 'onegroup/1.0',
                    'Authorization': 'Bearer {0}'.format(token),
                    'Accept': 'application/json',
                    'X-AnchorMailbox': user_email}
