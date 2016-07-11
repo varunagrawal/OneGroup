@@ -6,6 +6,7 @@ class OneDrive:
     """
     References:
         https://graph.microsoft.io/en-us/docs/authorization/app_authorization
+        https://dev.onedrive.com/readme.htm
 
     """
 
