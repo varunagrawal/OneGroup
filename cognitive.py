@@ -7,6 +7,9 @@ class Face:
 
     KEY = "d53c4b9babfd43b0b0812e24d8f904df"
 
+    def __init__(self):
+        super()
+
     def request_headers(self):
         headers = {"Ocp-Apim-Subscription-Key": self.KEY,
                    "Content-Type": "application/json"}
@@ -31,7 +34,19 @@ class Face:
         else:
             return "{0}: {1}".format(r.status_code, r.text)
 
-    def add_person_face(self, person_image_url, person_group_id, target_face):
+    def get_person(self, person_group_id, person_id):
+        url = "https://api.projectoxford.ai/face/v1.0/persongroups/{personGroupId}/persons/{personId}".format(
+            personGroupId=person_group_id,
+            personId=person_id
+        )
+
+        r = requests.get(url, headers=self.request_headers())
+        if r.status_code == requests.codes.ok:
+            return r.json()
+        else:
+            return "{0}: {1}".format(r.status_code, r.text)
+
+    def add_person_face(self, person_image_url, person_group_id, person_id, target_face):
         """
         https://dev.projectoxford.ai/docs/services/563879b61984550e40cbbe8d/operations/563879b61984550f3039523b
         :param person_image_url:
@@ -40,14 +55,14 @@ class Face:
         :return:
         """
         url = "https://api.projectoxford.ai/face/v1.0/persongroups/{personGroupId}/persons/{personId}/persistedFaces"\
-            .format(personGroupId=person_group_id)
+            .format(personGroupId=person_group_id, personId=person_id)
         data = {"url": person_image_url}
         params = {"targetFace": "{left},{top},{width},{height}".format(left=target_face["left"],
                                                                        top=target_face["top"],
                                                                        width=target_face["width"],
                                                                        height=target_face["height"])}
 
-        r = requests.post(url, header=self.request_headers(), data=json.dumps(data), params=params)
+        r = requests.post(url, headers=self.request_headers(), data=json.dumps(data), params=params)
         if r.status_code == requests.codes.ok:
             return r.json()
         else:
@@ -85,6 +100,17 @@ class Face:
 
         r = requests.post(url, headers=self.request_headers())
         if r.status_code == 202:
+            return True
+        else:
+            return "{0}: {1}".format(r.status_code, r.text)
+
+    def training_status(self, person_group_id):
+        url = "https://api.projectoxford.ai/face/v1.0/persongroups/{personGroupId}/training".format(
+            personGroupId=person_group_id)
+
+        r = requests.get(url, headers=self.request_headers())
+
+        if r.status_code == requests.codes.ok:
             return r.json()
         else:
             return "{0}: {1}".format(r.status_code, r.text)
@@ -100,9 +126,12 @@ class Face:
         else:
             return "{0}: {1}".format(r.status_code, r.text)
 
-    def identify(self, image_url):
+    def identify(self, image_url, person_group_id, face_ids):
         url = "https://api.projectoxford.ai/face/v1.0/identify"
-        data = {"url": image_url}
+        data = {"url": image_url,
+                "faceIds": face_ids,
+                "personGroupId": person_group_id,
+                "maxNumOfCandidatesReturned": 5}
 
         r = requests.post(url, headers=self.request_headers(), data=json.dumps(data))
 
