@@ -17,7 +17,7 @@ def onedrive_flow():
         print(details)
 
 
-def cognitive_flow():
+def cognitive_flow(train=True):
     cog_client = cognitive.Face()
 
     group_id = "varun"
@@ -35,7 +35,57 @@ def cognitive_flow():
 
     print(person_ids)
 
-    print(cog_client.detect(image_url="https://public-ch3302.files.1drv.com/y3mDneSDzz8eV9V319LdQHrCCKvjJeKohMvqe6IXotRrn_1ZhVvQWjJHmefFQSnZmKHtKVcxHBu2EE7tSvNRc-lIL5r_QWFVEBlAdAxkFTIJ0ACPkhIXq2S7nWnZhiXAyf2OsxDnqObH2jI5hfrD4AcJFD3iw0QkB06qx6mE9VhsakpPGPmy9z7aOSslJq6X3JQTEEUMuHZeridUiO3qAW-4bE1wX56YI3H8M9Cc8OV53E78P-3yMxZ0xKp23H-yiPt"))
+    if train:
+        # View the image https://1drv.ms/i/s!AO18pri6pxSNktNI
+        image_url = "https://public-ch3302.files.1drv.com/y3mQH9SQMNHsr3hUcMcw9PG3Z_5S8qc1eUpMu693s0qM45t-4Nt3vQiSmJzaAyPxPOjrKxrz-3y7gg9hxUYwNiWtTKm-YYMDdDcT5QseoJBb419qs2u0-aPFCm8C5AX5LaN6tJJZ5h69z2YPLtrxn9a7eA7rpJRwxi2n2peIH1hyaiSsscLvQZGd9v8bHX9b42_yyIaUTlwQeYG72bscGhKtGMlzKXQsJOTfi9uuqDshmWncrpIqni3uTh-QQ3cTNHV"
 
-# cognitive_flow()
-onedrive_flow()
+        print(cog_client.detect(image_url=image_url))
+
+        varun_face = {'faceRectangle': {'width': 494, 'top': 652, 'left': 31, 'height': 494},
+                      'faceId': 'e99f463b-ec4c-4f25-b1c8-e84d4a85c76a'}
+        preeti_face = {'faceRectangle': {'width': 352, 'top': 982, 'left': 616, 'height': 352},
+                       'faceId': '5de78d95-6717-4d4b-86a0-0687ba5ac8e3'}
+
+        varun_face_id = cog_client.add_person_face(image_url, person_group_id=group_id,
+                                                   person_id=person_ids["Varun"], target_face=varun_face['faceRectangle'])
+        print(varun_face_id)
+
+        cog_client.train(group_id)
+
+        while cog_client.training_status(group_id)["status"] != "succeeded":
+            pass
+
+        print("Training completed!")
+
+    else:
+        image_url = "https://public-ch3302.files.1drv.com/y3m863vZNV4hKrlU1_hm2-FO8uV9Pxhgsc62ijCouY7ISGLzy0yOkUBUBiRq8PQjEwpQ2cEBXQqp-yUVCaAefv5aq70-7e_i8-nzRELd_Xn-cMHaF3xp6uAgDB2_SonAemnkebBhl73xyhA_DUwFiwKu3FmK9ZdwQ2p41MyBnEikZ7Mch6a1Gp9q5LimYvIzhnwW2VbbQT5pyAQkIaPqy7KECuu1rQM_XSY8d6Vd7bdrCk-_fvjCDCNOd1LGyugYYPc"
+        detections = cog_client.detect(image_url)
+
+        if len(detections) == 0:
+            print("No faces in image")
+            return False
+
+        face_ids = []
+        for detection in detections:
+            face_ids.append(detection["faceId"])
+
+        resp = cog_client.identify(image_url=image_url, person_group_id=group_id, face_ids=face_ids)
+        print(resp)
+        for person in resp:
+            if len(person["candidates"]) > 0:
+                person_id = person["candidates"][0]["personId"]
+                who = cog_client.get_person(person_group_id=group_id, person_id=person_id)
+                print("{0} identified in image".format(who["name"]))
+            else:
+                print("This person is not in our system. Informing NSA now!")
+
+
+def check_training_status():
+    cog_client = cognitive.Face()
+    group_id = "varun"
+    print(cog_client.training_status(group_id))
+
+# Onedrive keeps regenerating the download links necessitating the need to run the onedrive flow again and again -_-
+# onedrive_flow()
+
+cognitive_flow(train=False)
