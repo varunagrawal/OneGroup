@@ -1,5 +1,6 @@
 import requests
 from urllib.parse import urlencode
+import json
 
 
 class OneDrive:
@@ -63,6 +64,7 @@ class OneDrive:
         return {'User-Agent': 'onegroup/1.0',
                 'Authorization': 'Bearer {0}'.format(self.auth["access_token"]),
                 'Accept': 'application/json',
+                'Content-Type': 'application/json',
                 'X-AnchorMailbox': self.user_email}
 
     def get_folder_children(self, folder="cameraroll"):
@@ -70,3 +72,14 @@ class OneDrive:
 
         r = requests.get(url, headers=self.headers())
         return r.json()
+
+    def add_webhook_subscription(self):
+        url = self.API_URL + "/drive/special/approot/subscriptions"
+        data = {
+            "notificationUrl": "https://contoso.azurewebsites.net/api/webhook-receiver",
+            "expirationDateTime": "2017-01-01T11:23:00.000Z"
+        }
+
+        r = requests.post(url, headers=self.headers(), data=json.dumps(data))
+
+        print(r.text)

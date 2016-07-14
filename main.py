@@ -14,7 +14,9 @@ def onedrive_flow():
         # 'fileSystemInfo', 'cTag', 'createdDateTime', 'name', 'id']
         details = "{3}: {0}={1} @ {2} and {4}".format(item["id"], item["name"],
                                                       item["webUrl"], idx, item["@content.downloadUrl"])
-        print(details)
+        # print(details)
+
+    od_client.add_webhook_subscription()
 
 
 def train_person():
@@ -95,6 +97,6 @@ def check_training_status():
     print(cog_client.training_status(group_id))
 
 # Onedrive keeps regenerating the download links necessitating the need to run the onedrive flow again and again -_-
-# onedrive_flow()
+onedrive_flow()
 
-cognitive_flow(train=False)
+# cognitive_flow(train=False)
