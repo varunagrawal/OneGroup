@@ -33,6 +33,10 @@ def login(request):
     return redirect(auth_url)
 
 
+def webhook(request):
+    return HttpResponse("Notification received")
+
+
 def authenticate(request):
     code = request.GET["code"]
     params = {
