@@ -1,6 +1,6 @@
 import onedrive
 import cognitive
-import uuid
+import argparse
 
 
 def onedrive_flow():
@@ -15,6 +15,15 @@ def onedrive_flow():
         details = "{3}: {0}={1} @ {2} and {4}".format(item["id"], item["name"],
                                                       item["webUrl"], idx, item["@content.downloadUrl"])
         print(details)
+
+
+def train_person():
+    parser = argparse.ArgumentParser(description='Train Person Face')
+    parser.add_argument('person_name', type=str, help='The name of the person being trained')
+    parser.add_argument('image_url', type=str, help="The image URL with the person face")
+    parser.add_argument('--person_id', required=False, type=str, help="The person ID as given by the Cognitive API")
+
+    args = parser.parse_args()
 
 
 def cognitive_flow(train=True):
