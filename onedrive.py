@@ -76,7 +76,7 @@ class OneDrive:
     def add_webhook_subscription(self):
         url = self.API_URL + "/drive/special/approot/subscriptions"
         data = {
-            "notificationUrl": "https://contoso.azurewebsites.net/api/webhook-receiver",
+            "notificationUrl": "http://onegroup.herokuapp.com/onedrive/webhook",
             "expirationDateTime": "2017-01-01T11:23:00.000Z"
         }
 
