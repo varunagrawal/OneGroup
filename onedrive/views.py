@@ -75,7 +75,7 @@ def approot(request):
         # ['parentReference', 'size', '@content.downloadUrl', 'eTag', 'webUrl', 'photo', 'file', 'image',
         # 'createdBy', 'lastModifiedBy', 'lastModifiedDateTime',
         # 'fileSystemInfo', 'cTag', 'createdDateTime', 'name', 'id']
-        img = "img src={0} alt={1}".format(item["@content.downloadUrl"], item["name"])
+        img = "<a href={0} alt={1}>{2}</a>".format(item["webUrl"], item["name"], item["@content.downloadUrl"])
         images.append(img)
         # "{3}: {0}={1} @ {2} and {4}".format(item["id"], item["name"], item["webUrl"], idx, item["@content.downloadUrl"])
 

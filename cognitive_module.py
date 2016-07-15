@@ -46,11 +46,24 @@ class Face:
         else:
             return "{0}: {1}".format(r.status_code, r.text)
 
+    def delete_person(self, person_group_id, person_id):
+        url = "https://api.projectoxford.ai/face/v1.0/persongroups/{personGroupId}/persons/{personId}".format(
+            personGroupId=person_group_id,
+            personId=person_id
+        )
+
+        r = requests.delete(url, headers=self.request_headers())
+        if r.status_code == requests.codes.ok:
+            return True
+        else:
+            return False
+
     def add_person_face(self, person_image_url, person_group_id, person_id, target_face):
         """
         https://dev.projectoxford.ai/docs/services/563879b61984550e40cbbe8d/operations/563879b61984550f3039523b
         :param person_image_url:
         :param person_group_id:
+        :param person_id
         :param target_face:
         :return:
         """
@@ -139,3 +152,15 @@ class Face:
             return r.json()
         else:
             return "{0}: {1}".format(r.status_code, r.text)
+
+    def get_everyone_in_group(self, group_id):
+        url = "https://api.projectoxford.ai/face/v1.0/persongroups/{personGroupId}/persons".format(
+            personGroupId=group_id
+        )
+
+        r = requests.get(url, headers=self.request_headers())
+        if r.status_code == requests.codes.ok:
+            return r.json()
+        else:
+            return "{0}: {1}".format(r.status_code, r.text)
+
