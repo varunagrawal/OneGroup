@@ -34,7 +34,8 @@ def login(request):
 
 
 def webhook(request):
-    return HttpResponse("Notification received")
+    validation_token = request.GET["validationToken"]
+    return HttpResponse(validation_token)
 
 
 def authenticate(request):
