@@ -21,5 +21,5 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^onedrive/', include('onedrive.urls')),
     url(r'^$', views.index, name="index"),
-    url(r'^.well-known/acme-challenge/bUqyJai87Sc7zrIY5RsIj8dstyNUfJCKYUQw8xtRGeA$', views.certificate, name="ssl-cert")
+    # url(r'^.well-known/acme-challenge/bUqyJai87Sc7zrIY5RsIj8dstyNUfJCKYUQw8xtRGeA$', views.certificate, name="ssl-cert")
 ]
